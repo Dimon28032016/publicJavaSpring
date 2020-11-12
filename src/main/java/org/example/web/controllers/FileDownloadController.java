@@ -2,6 +2,7 @@ package org.example.web.controllers;
 
 import org.apache.log4j.Logger;
 import org.example.app.services.FileService;
+import org.example.app.services.MessageService;
 import org.example.web.dto.FileDownload;
 import org.example.web.exceptions.ValidationErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 @Controller
 @RequestMapping(value = "/files")
@@ -27,9 +27,12 @@ public class FileDownloadController {
 
     private final Logger log = Logger.getLogger(FileDownloadController.class);
     private FileService fileService;
+    private MessageService messageService;
+    private HashMap<String, File> whiteList;
 
     @PostConstruct
     public void initServerDir(){
+        whiteList = new HashMap<>();
         String rootPath = System.getProperty("catalina.home");
         File dir = new File(rootPath + File.separator + "external_uploads");
         if(dir.exists()) {
@@ -38,20 +41,36 @@ public class FileDownloadController {
                 fileDownload.setName(file.getName());
                 fileDownload.setNameUrl(file.getName().replaceAll("\\.", "%2e")); // Точка);
                 fileDownload.setSize(file.length() / 1024);
+                /*WhiteList*/
+                whiteList.put(file.getName(), file);
+                /*WhiteList*/
                 fileService.setFile(fileDownload);
             }
         }
     }
 
     @Autowired
-    public FileDownloadController(FileService fileService) {
+    public FileDownloadController(FileService fileService, MessageService messageService) {
+
         this.fileService = fileService;
+        this.messageService = messageService;
     }
 
     @GetMapping
     public String getFiles(Model model) {
         model.addAttribute("files", fileService.getFiles());
+        model.addAttribute("errorList", messageService.getAllMessage());
         return "download_page";
+    }
+
+    private File checkWhitList(String fileName) throws ValidationErrorException {
+
+        File file = whiteList.get(fileName);
+        if(file == null)
+        {
+            throw new ValidationErrorException(500, "File nod found!", "/files");
+        }
+        return file;
     }
 
     @GetMapping("/download/{filename}")
@@ -64,7 +83,7 @@ public class FileDownloadController {
         log.info("DOWNLOAD ORIGINAL FILE = " + originalFileName);
 
         String rootPath = System.getProperty("catalina.home");
-        File file = new File(rootPath + File.separator + "external_uploads" + File.separator + originalFileName);
+        File file = checkWhitList(originalFileName);
         if (file.exists()){
             response.setHeader("Content-disposition", "attachment;filename=" + originalFileName);
             response.setContentType("APPLICATION/OCTET-STREAM");
