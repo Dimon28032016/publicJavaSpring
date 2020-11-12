@@ -1,2 +1,2 @@
-# publicJavaSpring
+# javaspring
 publicJavaSpring

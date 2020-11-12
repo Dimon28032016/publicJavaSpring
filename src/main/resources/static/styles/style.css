@@ -1,0 +1,78 @@
+#root_container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#books {
+    width: 50%;
+    border-collapse: collapse;
+}
+
+.login_item {
+    margin-bottom: 10px;
+}
+
+#lableError {
+    margin-left: 25px;
+    margin-bottom: -25px;
+}
+
+.saveForm td, .min_container td{
+    border-bottom: none;
+}
+
+.saveForm input, .min_container input{
+    margin-bottom: 20px;
+}
+
+.saveForm input + p, .min_container input + p {
+    position: absolute;
+    margin-top: -20px;
+}
+
+#filterRemove {
+    float: left;
+    margin-right: 10px;
+}
+
+.min_container {
+    margin-left: 25px;
+}
+
+.filterRemove {
+    height: 25px;
+}
+
+.hidden {
+    display: none;
+}
+
+.selected {
+    display: block;
+}
+
+table {
+    margin: 25px;
+}
+
+th {
+    text-align: left;
+}
+
+th, td {
+    border-bottom: 1px solid #ddd;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float:right;
+}
+
+.validError {
+    color: red;
+}

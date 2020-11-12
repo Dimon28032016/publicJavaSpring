@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create user</title>
+    <link rel="stylesheet" th:href="@{/static/styles/style.css}"/>
+</head>
+<body>
+<div id="root_container">
+    <a class="left" th:href="@{/books/shelf}">to page Books</a>
+    <a class="right" th:href="@{/login}">Exit</a>
+    <br>
+    <div class="label">File List</div>
+
+    <table id="files">
+        <tr>
+            <th>name</th>
+            <th>size KB</th>
+        </tr>
+        <tr th:each="file : ${files}">
+            <td th:text="${file.name}"></td>
+            <td th:text="${file.size}"></td>
+            <td>
+                <a th:href="@{/files/download/{filename}(filename=${file.nameUrl})}">DownloadFile</a>
+            </td>
+        </tr>
+    </table>
+
+    <div class="label">ErrorList</div>
+    <table id="errorTable">
+        <tr>
+            <th>Code</th>
+            <th>Message</th>
+        </tr>
+        <tr th:each="error : ${errorList}">
+            <td th:text="${error.code}"></td>
+            <td th:text="${error.message}"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
